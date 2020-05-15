@@ -111,7 +111,7 @@ class Userchart extends React.Component{
 }  
 class Adminchart extends React.Component{
 	render(){
-		return(<div>
+		return(
 			<div><Bar data={this.props.chartadmin}
        options={{
          maintainAspectRatio:false,
@@ -133,29 +133,9 @@ class Adminchart extends React.Component{
         }
        }}
 		       /></div>
-	<div><Bar data={this.props.chartadmin2}
-       options={{
-         maintainAspectRatio:false,
-         scales: {
-                   yAxes: [{
-                      ticks: {
-                      beginAtZero: true,
-                       min: 0
-                     }    
-                   }]
-                 },
-          title:{
-          display:true,
-          text:"Top 5 USERS with the most comments"
-        },
-        legend:{
-          display:"true",
-          position:"right"
-        }
-       }}
-		       /></div>	       
+	       
 		       
-		       </div>);
+		       );
 		       
 		       
 		       }
@@ -727,58 +707,8 @@ ClickSearchType=(type)=>{
 		}]
 	}
 	});
-	var commentnum=[];
-	for(let i in res){
-		commentnum.push({name:res[i].username,num:0});
-			}
-	for(let i in this.state.data){
-			if(this.state.data[i].comment.length!==0){
-				for(let j in this.state.data[i].comment){
-					for(let k in commentnum){
-						if(commentnum[k].name===this.state.data[i].comment[j].username){
-							commentnum[k].num++;
-						}
-						break;
-					}
-				}
-			}
-		}
-	var compare3=function(x,y){
-		if(x.num>y.num){
-			return -1;
-		}else{
-			return 0;
-		}
-	};
-	commentnum=commentnum.sort(compare3);
-	var fivecom=[];
-	fivecom.push(commentnum[0].name);
-	fivecom.push(commentnum[1].name);
-        fivecom.push(commentnum[2].name);
-	fivecom.push(commentnum[3].name);
-         fivecom.push(commentnum[4].name);
-	var fivecom1=[];
-	     fivecom1.push(commentnum[0].num);
-	 fivecom1.push(commentnum[1].num);
-	 fivecom1.push(commentnum[2].num);
-	fivecom1.push(commentnum[3].num);
-	 fivecom1.push(commentnum[4].num);
-	this.setState({
-	chartData3:{
-		labels:fivecom,
-		datasets:[{
-			label:"Comment number",
-			data:fivecom1,
-			backgroundColor:[
-            'rgba(255,99,132,0.2)',
-            'rgba(54,162,235,0.2)',
-            'rgba(255,206,86,0.2)',
-            'rgba(75,192,192,0.2)',
-            'rgba(153,102,255,0.2)', 
-          ]
-		}]
-	}
-	});
+	
+	
 	
 	
 	
@@ -1217,7 +1147,7 @@ else
 		<a className="nav-right" ><SignUp Loginout={true} ClickSignUp={this.ClickSignUp}/></a>&nbsp;&nbsp;&nbsp;
 		<a className="nav-right" ><LogInOut Loginout={true} toggleform={this.toggleform} Logout={this.adminLogout}/></a>
 		</nav>
-		 <div><Adminchart chartadmin={this.state.chartData2} chartadmin2={this.state.chartDate3}/></div>
+		 <div><Adminchart chartadmin={this.state.chartData2}/></div>
         <AdminStopInfo actiontype={this.state.actiontype} actionupdata={this.actionupdata} onContextMenu={this.adminRightClick}actiondelete={this.actiondelete}addstop={this.addstop}showuser={this.state.showuser} Serchtype={this.state.Searchtype} data={this.state.filteredDatas} IdSort={this.IdSort} RouteSort={this.RouteSort} NameSort={this.NameSort} LatitudeSort={this.LatitudeSort} LongitudeSort={this.LongitudeSort}/>
         
         <UserList  actiontype={this.state.actiontype}actionupdata={this.actionupdata} onContextMenu={this.adminRightClick}actiondelete={this.actiondelete}addUser={this.addUser}showuser={this.state.showuser} user={this.state.user}/>

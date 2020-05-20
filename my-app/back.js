@@ -483,6 +483,182 @@ app.get('/user', (req, res) => {
 	
 })
 
+
+//retrieve all stop
+app.get('/api/locations',(req,res)=>{
+		
+		
+		if (req.get('Authorization')==="Bearer csci2720")
+	{
+	var result={locations:{location:[]}};
+	Stop.find({},function(err,docs){		
+	
+		docs.forEach((stop)=>{
+			result.locations.location.push({id:stop.arrival[0].stopId,name:stop.name,latitude:stop.latitude,longitude:stop.longitude})
+			})		
+		var xml = builder.buildObject(result);
+	res.type('application/xml');
+		res.set('Content-Type', 'text/xml');
+		res.send(xml);
+		
+	})
+	}
+	else
+	{
+		res.status(401);
+		res.send("Imcorrect Authorization Bearer Token!");
+	}
+	})
+	//retrieve one specific location
+app.get('/api/locations/:stopId',(req,res)=>{
+	//console.log(req.params.stopId);
+	if (req.get('Authorization')==="Bearer csci2720")
+	{
+	Stop.findOne({arrival:{$elemMatch:{stopId:req.params.stopId}}},function(err,stop){
+		
+		if (err)
+		{ 
+		res.send("location dosen't found");
+		 return console.log(err);
+		 }
+		else
+	{	
+	if (stop==null)
+	{ 
+		res.send("location dosen't found");
+		 return console.log(err);
+		 }
+	var result={location:[{id:stop.arrival[0].stopId,name:stop.name,latitude:stop.latitude,longitude:stop.longitude}]};
+		var xml = builder.buildObject(result);
+		res.type('application/xml');
+		res.set('Content-Type', 'text/xml');
+		res.send(xml);
+		}
+	
+		})
+	
+
+	}
+	else
+	{
+		res.status(401);
+		res.send("Imcorrect Authorization Bearer Token!");
+		}
+	})
+	
+app.delete('/api/locations/:stopId',function(req,res){
+	if (req.get('Authorization')==="Bearer csci2720")
+	{
+		Stop.remove({arrival:{$elemMatch:{stopId:req.params.stopId}}}, (err, result) => {
+			if(err)
+				{
+					res.send("deletion failed");
+					return console.log(err);
+				}
+			if(result.deletedCount == 0)
+				res.send({ 'deleted': 0 });
+			else
+				res.send({ 'deleted': 1 });
+		})
+	 
+	}
+	else
+	{
+		res.status(401);
+		res.send("Imcorrect Authorization Bearer Token!")
+		}
+	
+	})
+	//add a new location
+app.post('/api/locations/',function(req,res){
+	if (req.get('Authorization')==="Bearer csci2720")
+	{
+		
+		var location=req.body.location;
+		//console.log(location[0]);
+		if (location==null)
+		{
+					res.send("Invalid body");
+					return console.log(err);
+		}
+		else
+	{	
+	
+			
+			var stop=new Stop({	
+	latitude:  location.latitude[0] ,
+	longitude: location.longitude[0] ,
+	name: location.name[0] ,
+	comment:[],
+	arrival:[{stopId: location.id[0],route:'###'}]
+								});
+	//console.log(stop);
+	stop.save(function(err,result){
+		if (err)
+	{
+		res.send("Adding failed.Probably this stop has already existed");
+			return console.log(err);
+		}
+		else
+		{
+			res.location('http://localhost:3000/api/locations/'+location.id[0]);
+		res.send("Adding successfully")
+		}
+		});
+			
+			
+	}
+	}
+  else
+	{
+		res.status(401);
+		res.send("Imcorrect Authorization Bearer Token!")
+		}
+	
+	})	
+	
+app.put('/api/locations/:stopId',function(req,res) {
+	if (req.get('Authorization')==="Bearer csci2720")
+	{
+	var condition={arrival:{$elemMatch:{stopId:req.params.stopId}}};
+	var location=req.body.location;
+/*	var update={ name:location.name[0],latitude:location.latitude[0], longitude:location.longitude[0]};
+	
+	Stop.updateOne(condition,update,(err,result) => {
+		if (err)
+		{
+			res.send("Update failed");
+			return console.log(err);
+			}
+		res.send("Update succeed");
+		})
+		*/
+		
+	Stop.findOne(condition,(err,stop)=>{
+		if (err||stop==null)
+		{
+			res.send("Update failed");
+			return console.log(err);
+			}
+			stop.name=location.name[0];
+			stop.latitude=location.latitude[0];
+			stop.longitude=location.longitude[0];
+		stop.arrival.forEach((value)=>{
+			value.stopId=location.id[0];
+			})
+			stop.save(); 
+			res.location('http://csci2720.cse.cuhk.edu.hk/2011/api/locations/'+location.id[0]);
+			res.send("Update succeed");
+		})	
+	
+}
+else
+{
+		res.status(401);
+		res.send("Imcorrect Authorization Bearer Token!")
+		}
+		
+		})	
 app.listen(2011);
 
 

@@ -610,7 +610,7 @@ app.post('/api/locations/',function(req,res){
 		}
 		else
 		{
-			res.location('http://localhost:3000/api/locations/'+location.id[0]);
+			res.location('http://csci2720.cse.cuhk.edu.hk/2011/api/locations/'+location.id[0]);
 		res.send("Adding successfully")
 		}
 		});

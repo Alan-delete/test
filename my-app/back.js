@@ -4,10 +4,19 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var http = require('http');
+var xml2js = require('xml2js');
+//var parseString = require('xml2js').parseString;
+var builder = new xml2js.Builder();
 
 /* define app to use express */
 var app = express();
 app.use(bodyParser.urlencoded({extended: true,limit: '50mb',parameterLimit:1000000}));
+
+
+//to get xml through post
+var xmlparser = require('express-xml-bodyparser');
+app.use(express.json());
+app.use(xmlparser());
 
 app.use(session({
 	secret: 'csci2720',
